@@ -1,0 +1,20 @@
+NutriTrack Dataset Cleaning Report
+=============================================
+
+Original products: 166
+Invalid nutrition records removed: 3
+Duplicates removed: 0
+Final products: 163
+
+Products by category:
+------------------------------
+Snacks: 21
+Cereals & Breakfast: 21
+Dairy: 21
+Beverages: 19
+Fruits: 15
+Vegetables: 15
+Bread & Bakery: 14
+Pulses & Legumes: 13
+Nuts & Seeds: 13
+Rice, Grains & Flour: 11

@@ -1,0 +1,11 @@
+group_id,category,rule
+1,Cereals & Breakfast,Products in the same category are considered candidate alternatives and are compared using user-selected nutrition priorities.
+2,"Rice, Grains & Flour",Products in the same category are considered candidate alternatives and are compared using user-selected nutrition priorities.
+3,Bread & Bakery,Products in the same category are considered candidate alternatives and are compared using user-selected nutrition priorities.
+4,Dairy,Products in the same category are considered candidate alternatives and are compared using user-selected nutrition priorities.
+5,Fruits,Products in the same category are considered candidate alternatives and are compared using user-selected nutrition priorities.
+6,Vegetables,Products in the same category are considered candidate alternatives and are compared using user-selected nutrition priorities.
+7,Pulses & Legumes,Products in the same category are considered candidate alternatives and are compared using user-selected nutrition priorities.
+8,Nuts & Seeds,Products in the same category are considered candidate alternatives and are compared using user-selected nutrition priorities.
+9,Snacks,Products in the same category are considered candidate alternatives and are compared using user-selected nutrition priorities.
+10,Beverages,Products in the same category are considered candidate alternatives and are compared using user-selected nutrition priorities.

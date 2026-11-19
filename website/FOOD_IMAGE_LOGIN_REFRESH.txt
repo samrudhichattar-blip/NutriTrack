@@ -1,0 +1,19 @@
+NUTRITRACK WEBSITE PATCH — LOGIN + FOOD PHOTOS
+
+Extract this ZIP into your existing NutriTrack project root (the folder containing backend, mobile, website).
+Allow it to replace:
+  website/src/main.tsx
+  website/src/style.css
+It adds:
+  website/public/food-images/milk.webp
+  website/public/food-images/peanuts.webp
+  website/public/food-images/potatoes.webp
+  website/public/food-images/vegetables.webp
+
+This patch only changes the website UI. It does not change backend, database, .env, or mobile app.
+
+Then in the website terminal:
+  npm run dev
+If already running, save/reload the page and press Ctrl+F5.
+
+Food images are illustrative category photos. Milk/dairy, peanut/groundnut, potato/aloo, and vegetable-related products get distinct images; other catalogue items retain their existing category emoji fallback.

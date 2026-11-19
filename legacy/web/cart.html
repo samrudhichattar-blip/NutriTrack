@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cart — NutriTrack</title>
+<link rel="stylesheet" href="style.css">
+<link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#214d3a"><link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png"></head>
+<body>
+<nav class="topnav"><a class="brand" href="/dashboard.html"><span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 4C11 4 5 8 5 15c0 3 2 5 5 5 7 0 10-7 10-16Z"/><path d="M4 21c3-5 7-8 12-11"/><path d="m13 14 2 2 4-5"/></svg></span>NutriTrack</a><div class="navlinks"><a href="/goal.html">My goals</a><a href="/dashboard.html">Meal planner</a><a href="/cart.html" class="active">Basket & score</a><a class="nav-logout" onclick="logout()">Log out</a></div></nav>
+<main class="app">
+  <div class="eyebrow">Your meal basket</div>
+  <h1 class="pagetitle">Your basket, made clearer.</h1>
+  <p class="pagesub">Review your portions, see nutrition totals, and understand what your Basket Health Score is telling you. Nutrition values are estimates based on the selected quantities.</p>
+  <div class="grid2">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <h2 style="margin:0">Items</h2>
+        <button class="small ghost" id="undoBtn">Undo</button>
+      </div>
+      <div class="basket-list" id="basketList"></div>
+    </div>
+    <div class="card">
+      <h2>Nutrition at a glance</h2><p class="card-sub">Totals for everything in your current basket.</p>
+      <div class="totals" id="totals"></div>
+      <h2>Basket Health Score</h2><p class="card-sub">An explainable comparison with your saved goals, not a medical rating.</p>
+      <div id="scoreBox"></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <h2>Try a smart food swap</h2>
+    <p class="card-sub">Pick a basket item and a nutrition preference to compare alternatives from the dataset. A swap is a suggestion, not a universal healthy/unhealthy label.</p>
+    <div id="recoTargets" style="margin-bottom:10px"></div>
+    <div id="prefChips" style="display:none;margin-bottom:10px">
+      <span class="chip" onclick="pickPref(1)">Lowest Calories</span>
+      <span class="chip" onclick="pickPref(2)">Highest Protein</span>
+      <span class="chip" onclick="pickPref(3)">Lowest Sugar</span>
+      <span class="chip" onclick="pickPref(4)">Highest Fiber</span>
+      <span class="chip" onclick="pickPref(5)">Lowest Sodium</span>
+    </div>
+    <div id="recoResults"></div>
+  </div>
+</main>
+<div class="toast" id="toast"></div>
+<script>
+if (!localStorage.getItem('nutritrack_token')) window.location.href = '/login.html'; else if (!localStorage.getItem('nutritrack_goal_setup')) window.location.href = '/goal.html';
+function logout() { localStorage.removeItem('nutritrack_token'); localStorage.removeItem('nutritrack_username'); window.location.href = '/login.html'; }
+function showToast(msg) { const el = document.getElementById('toast'); el.textContent = msg; el.style.display = 'block'; setTimeout(() => el.style.display = 'none', 2500); }
+const TOKEN = localStorage.getItem('nutritrack_token');
+
+let targetId = null;
+
+async function loadAll() {
+  const basketRes = await fetch('/api/basket');
+  const items = await basketRes.json();
+  renderBasket(items);
+
+  const nutRes = await fetch('/api/nutrition');
+  renderTotals(await nutRes.json());
+
+  const scoreRes = await fetch('/api/healthscore?token=' + TOKEN);
+  const score = await scoreRes.json();
+  if (score.success === false) { showToast(score.message); return; }
+  renderScore(score);
+}
+
+function renderBasket(items) {
+  const box = document.getElementById('basketList');
+  if (!items.length) {
+    box.innerHTML = '<div class="empty">Your basket is empty for now. Visit the meal planner to explore foods or get suggestions for your goal.</div>';
+    document.getElementById('recoTargets').innerHTML = '<span style="font-size:12px;color:var(--sub)">Add items first.</span>';
+    return;
+  }
+  box.innerHTML = items.map(it => `
+    <div class="prow">
+      <div><div class="name">${it.name}</div><div class="meta">${it.category} · ${it.quantity}g</div></div>
+      <div style="display:flex;gap:4px">
+        <button class="small ghost" onclick="adjust('${it.id}','decrease')">-100g</button>
+        <button class="small ghost" onclick="adjust('${it.id}','increase')">+100g</button>
+        <button class="small ghost" onclick="removeItem('${it.id}')">Remove</button>
+      </div>
+    </div>`).join('');
+  document.getElementById('recoTargets').innerHTML = items.map(it =>
+    `<span class="chip${targetId===it.id?' active':''}" onclick="selectTarget('${it.id}')">${it.name}</span>`).join('');
+}
+
+function renderTotals(t) {
+  document.getElementById('totals').innerHTML = `
+    <div>Calories<b>${(+t.calories).toFixed(0)}</b></div>
+    <div>Protein<b>${(+t.protein).toFixed(1)}g</b></div>
+    <div>Carbs<b>${(+t.carbohydrates).toFixed(1)}g</b></div>
+    <div>Sugar<b>${(+t.sugar).toFixed(1)}g</b></div>
+    <div>Fat<b>${(+t.fat).toFixed(1)}g</b></div>
+    <div>Fiber<b>${(+t.fiber).toFixed(1)}g</b></div>
+    <div>Sodium<b>${(+t.sodium).toFixed(0)}mg</b></div>`;
+}
+
+function renderScore(s) {
+  document.getElementById('scoreBox').innerHTML = `
+    <div class="score">${(+s.overall).toFixed(0)}<span style="font-size:14px;color:var(--sub);font-weight:400">/100</span></div>
+    <div class="barrow">Calories<div class="bar"><i style="width:${s.calorieScore}%"></i></div></div>
+    <div class="barrow">Protein<div class="bar"><i style="width:${s.proteinScore}%"></i></div></div>
+    <div class="barrow">Sugar<div class="bar"><i style="width:${s.sugarScore}%"></i></div></div>
+    <div class="barrow">Sodium<div class="bar"><i style="width:${s.sodiumScore}%"></i></div></div>
+    <div class="barrow">Weakest area: <span class="weak">${s.weakestArea}</span></div>`;
+}
+
+async function adjust(id, dir) {
+  await fetch('/api/basket/' + dir + '?id=' + encodeURIComponent(id), { method: 'POST' });
+  loadAll();
+}
+async function removeItem(id) {
+  await fetch('/api/basket/remove?id=' + encodeURIComponent(id), { method: 'POST' });
+  loadAll();
+}
+document.getElementById('undoBtn').addEventListener('click', async () => {
+  const res = await fetch('/api/undo', { method: 'POST' });
+  const data = await res.json();
+  if (!data.success) showToast(data.message || 'Nothing to undo');
+  loadAll();
+});
+
+function selectTarget(id) {
+  targetId = id;
+  document.getElementById('prefChips').style.display = 'block';
+  document.getElementById('recoResults').innerHTML = '';
+  loadAll();
+}
+
+async function pickPref(pref) {
+  const res = await fetch('/api/recommendations?id=' + encodeURIComponent(targetId) + '&preference=' + pref);
+  const recs = await res.json();
+  const box = document.getElementById('recoResults');
+  if (!recs.length) { box.innerHTML = '<div class="empty">No alternatives found in this category.</div>'; return; }
+  box.innerHTML = recs.map(r => `
+    <div class="reco">
+      <b>${r.name}</b> — ${r.calories} kcal, ${r.protein}g protein, ${r.sugar}g sugar, ${r.sodium}mg sodium
+      <div style="margin-top:8px"><button class="small" onclick="replaceItem('${r.id}')">Replace with this (What-If)</button></div>
+    </div>`).join('');
+}
+
+async function replaceItem(newId) {
+  const res = await fetch('/api/basket/replace?oldId=' + encodeURIComponent(targetId) +
+    '&newId=' + encodeURIComponent(newId) + '&token=' + TOKEN, { method: 'POST' });
+  const data = await res.json();
+  if (!data.success) { showToast('Replace failed'); return; }
+  const change = (data.scoreAfter - data.scoreBefore).toFixed(1);
+  showToast('Health score change: ' + (change >= 0 ? '+' : '') + change + ' points');
+  targetId = null;
+  document.getElementById('prefChips').style.display = 'none';
+  document.getElementById('recoResults').innerHTML = '';
+  loadAll();
+}
+
+loadAll();
+</script>
+<script>if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) { window.addEventListener("load", () => navigator.serviceWorker.register("/service-worker.js").catch(err => console.warn("PWA setup unavailable", err))); }</script></body>
+</html>

@@ -1,0 +1,10 @@
+NutriTrack Emerald + Cream website palette
+
+1. Back up your existing NutriTrack/website/src/style.css.
+2. Extract this ZIP into your NutriTrack project root and allow the style.css file to replace the existing one.
+3. Restart the Vite website if needed: npm run dev
+4. Hard refresh the browser: Ctrl + F5
+
+Palette: emerald green accents and navigation, deep forest-green hero areas,
+warm cream page surfaces, and off-white cards for readable content.
+No backend or database files are included.

@@ -1,0 +1,11 @@
+NutriTrack My Plan update
+
+This patch replaces only two source files:
+- backend/src/routes/planner.ts
+- website/src/main.tsx
+
+It removes catalogue-based Meal 1/Meal 2 pseudo-recommendations from the planner API and website. My Plan now displays estimated daily targets and the user's saved preferences, with links to Explore Foods and My Basket.
+
+Apply: extract this ZIP into your existing NutriTrack project root and allow these two files to be overwritten. It does not include or overwrite .env, database files, CSS, or node_modules.
+
+After applying, restart the backend if needed and refresh the website. Run `npm run typecheck` and `npm run build` in backend, then `npm run build` in website.

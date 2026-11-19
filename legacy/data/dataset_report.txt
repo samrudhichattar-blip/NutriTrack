@@ -1,0 +1,30 @@
+NutriTrack Dataset Report
+=========================
+
+Final records: 166
+Target records: 180
+Minimum required: 150
+
+Category counts:
+- Cereals & Breakfast: 18
+- Rice, Grains & Flour: 18
+- Bread & Bakery: 18
+- Dairy: 18
+- Fruits: 18
+- Vegetables: 18
+- Pulses & Legumes: 18
+- Nuts & Seeds: 18
+- Snacks: 18
+- Beverages: 18
+
+Validation:
+- Product code required
+- Product name required
+- Core nutrition values required
+- Values normalized per 100g/100ml
+- Duplicate products removed
+- Obvious numeric outliers rejected
+
+Source:
+Open Food Facts API / Product Opener
+Each product contains its source URL.

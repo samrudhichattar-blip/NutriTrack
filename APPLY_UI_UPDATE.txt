@@ -1,0 +1,19 @@
+NutriTrack - UI update (website only)
+
+WHAT CHANGED (5 files, nothing else touched)
+  website/src/main.tsx            small edits: imports, images, Finish button, Thank-you page
+  website/src/extras.tsx          NEW  food photos/tiles, Thank-you page, basket-image maker
+  website/src/polish.css          NEW  design polish + login contrast fix
+  website/public/img/auth-basket.svg   NEW  login/overview illustration
+  website/public/img/thanks.svg        NEW  thank-you illustration
+
+HOW TO APPLY
+  1. Close the dev server.
+  2. Unzip this file INTO your NutriTrack folder (so "website" merges) and choose "Replace".
+  3. cd website
+     npm run dev          (or: npm run build)
+
+BACKEND, DATABASE, MOBILE APP: not changed. No new packages needed.
+
+NOTE: main.tsx is replaced. If you edited main.tsx after NutriTrack_5.zip, tell me and
+I will re-apply the changes on top of your latest file instead.

@@ -21,6 +21,14 @@ coverage/
 Thumbs.db
 .vscode/
 
+# Sensitive user data
+legacy/data/users.csv
+
+# TypeScript generated files
 *.tsbuildinfo
 
-legacy/data/users.csv
+# Environment secrets
+.env
+.env.*
+!.env.example
+!.env.sample
